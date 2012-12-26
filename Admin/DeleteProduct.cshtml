@@ -1,0 +1,41 @@
+﻿@{
+    if(!Roles.IsUserInRole("Admin"))
+    {
+        Response.Redirect("~/Account/Login.cshtml");
+    }
+    Page.Title="Delete Product";
+
+    Validation.RequireField("ID", "You must specify ID.");
+    var id=0;
+    var db=Database.Open("shopping");
+    if(IsPost)
+    {
+                AntiForgery.Validate();
+                //deleting from database
+                if (Validation.IsValid())
+                {
+                    id=Convert.ToInt32(Request["ID"]);
+                    var q="delete from Products where Id=@0";
+                    db.Execute(q,id);
+                    db.Close();
+                }         
+    }
+}
+
+        <h1>Delete Product</h1>
+        
+        <form method="post" enctype="multipart/form-data">
+             @AntiForgery.GetHtml()
+        <div class="addproduct">
+            
+                    <div>
+                        <label>ID</label>
+                        <input type="text" name="ID" placeholder="Product Id" value="@id" @Validation.For("ID")>
+                        @Html.ValidationMessage("ID")
+                    </div> 
+                    
+                    <div id="buttons">
+                        <input type="submit" value="DELETE">
+                    </div>
+            </div>
+            </form> 
